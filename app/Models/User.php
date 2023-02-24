@@ -41,4 +41,47 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class);
+    }
+
+    public function chat(User $user)
+    {
+        return $this->chats()->attach($user);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'user_id', 'friend_id');
+    }
+
+    public function follow(User $user)
+    {
+        if ($this->id !== $user->id) {
+            return $this->friends()->attach($user->id);
+        }
+    }
+
+    public function unfollow(User $user)
+    {
+        return $this->friends()->detach($user->id);
+    }
+
+    public function isFriends(User $user)
+    {
+        return $this->friends->contains($user->id);
+    }
+
+    public function friendss()
+    {
+        return $this->friends()->where('user_id', $this->id)->get();
+    }
 }
+
