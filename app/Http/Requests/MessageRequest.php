@@ -27,7 +27,6 @@ class MessageRequest extends FormRequest
         return [
             'body' => 'required',
             'user_id' => 'required',
-            'chat_id' => 'required'
         ];
     }
 

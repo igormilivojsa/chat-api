@@ -37,9 +37,9 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(MessageRequest $request)
+    public function store(MessageRequest $request, Chat $chat)
     {
-        Message::create($request->validated());
+        $chat->messages()->create($request->validated());
 
         return response('message stored');
     }
