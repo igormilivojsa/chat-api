@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MessageRequest;
 use App\Models\Chat;
 use App\Models\Message;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Js;
 
 class MessageController extends Controller
 {
@@ -14,7 +16,7 @@ class MessageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Chat $chat)
     {
         $messages = Message::all();
 
@@ -37,11 +39,11 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(MessageRequest $request, Chat $chat)
+    public function store(MessageRequest $request, Chat $chat): JsonResponse
     {
         $chat->messages()->create($request->validated());
 
-        return response('message stored');
+        return response()->json('message stored');
     }
 
     /**
@@ -50,9 +52,9 @@ class MessageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($body)
+    public function show(Chat $chat,$body)
     {
-        return Message::where('body', 'like', '%'.$body.'%')->get();
+        return $chat->messages()->where('body', 'like', '%'.$body.'%')->get();
     }
 
     /**
@@ -84,10 +86,10 @@ class MessageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Chat $chat, $id): JsonResponse
     {
-        Message::destroy($id);
+        $chat->messages()->find($id)->delete();
 
-        return response('message deleted');
+        return response()->json('message deleted');
     }
 }

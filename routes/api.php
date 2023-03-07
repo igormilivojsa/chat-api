@@ -20,9 +20,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('message/{chat}', [MessageController::class, 'index']);
     Route::post('message/{chat}', [MessageController::class, 'store']);
+    Route::get('message/{chat}/{body}', [MessageController::class, 'show']);
+    Route::delete('message/{chat}/{id}', [MessageController::class, 'destroy']);
 
     Route::get('chats/{user}', [ChatController::class, 'index']);
     Route::post('chats/{user}', [ChatController::class, 'store']);
+    Route::delete('chats/{user}', [ChatController::class, 'destroy']);
 
     Route::get('friends', [FriendController::class, 'index']);
     Route::post('friends/{user}', [FriendController::class, 'store']);

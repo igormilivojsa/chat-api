@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -44,7 +45,7 @@ class User extends Authenticatable
 
     public function chats()
     {
-        return $this->belongsToMany(Chat::class);
+        return $this->belongsToMany(Chat::class)->withPivot('user_id');
     }
 
     public function chat(User $user)
@@ -82,6 +83,14 @@ class User extends Authenticatable
     public function friendss()
     {
         return $this->friends()->where('user_id', $this->id)->get();
+    }
+
+    public function hasChatWith(User $user)
+    {
+        return  DB::table('chat_user')
+            ->whereIn('chat_id', $this->chats->modelKeys())
+            ->where('user_id', $user->id)
+            ->count() > 0;
     }
 }
 
