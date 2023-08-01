@@ -15,7 +15,7 @@ class FriendController extends Controller
      */
     public function index(User $user): JsonResponse
     {
-        return response()->json(auth()->user()->friendss());
+        return response()->json(auth()->user()->friendships());
     }
 
     /**

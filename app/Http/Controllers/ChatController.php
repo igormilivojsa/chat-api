@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ChatRequest;
 use App\Models\Chat;
 use App\Models\User;
+use http\Message;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function index(User $user): JsonResponse
+    public function index(): JsonResponse
     {
-        return response()->json($user->load('chats.users'));
+        return response()->json(auth()->user()->load('chats.users'));
     }
 
     public function create()
@@ -29,7 +30,7 @@ class ChatController extends Controller
             $user->chats()->attach($chat);
 
             return response()->json([
-                'message' => 'chat created'
+                'message' => 'Chat created successfully'
             ]);
         } else {
             return response()->json([
@@ -38,9 +39,9 @@ class ChatController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Chat $chat)
     {
-        //
+        return response()->json($chat->messages()->get());
     }
 
     public function edit($id)
@@ -53,15 +54,11 @@ class ChatController extends Controller
         //
     }
 
-    public function destroy(User $user)
+    public function destroy(Chat $chat, User $user)
     {
-        if (auth()->user()->hasChatWith($user) == true) {
-            auth()->user()->chats()->find($chat)->delete();
-        } else {
-            return response()->json([
-                'message' => _('Chat doesnt exists')
-            ]);
-        }
-
+        $chat->find($chat)->delete();
+        return response()->json([
+            'message' => 'Chat deleted successfully'
+        ]);
     }
 }

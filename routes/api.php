@@ -23,7 +23,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('message/{chat}/{body}', [MessageController::class, 'show']);
     Route::delete('message/{chat}/{id}', [MessageController::class, 'destroy']);
 
-    Route::get('chats/{user}', [ChatController::class, 'index']);
+    Route::get('chats', [ChatController::class, 'index']);
+    Route::get('chats/{chat}', [ChatController::class, 'show']);
     Route::post('chats/{user}', [ChatController::class, 'store']);
     Route::delete('chats/{user}', [ChatController::class, 'destroy']);
 

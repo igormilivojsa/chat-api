@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Translation\MessageSelector;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -53,6 +54,11 @@ class User extends Authenticatable
         return $this->chats()->attach($user);
     }
 
+    public function userExists(User $user)
+    {
+        return $this->where('id', $user->id)->exists();
+    }
+
     public function messages()
     {
         return $this->hasMany(Message::class);
@@ -80,7 +86,7 @@ class User extends Authenticatable
         return $this->friends->contains($user->id);
     }
 
-    public function friendss()
+    public function friendships()
     {
         return $this->friends()->where('user_id', $this->id)->get();
     }
@@ -92,5 +98,13 @@ class User extends Authenticatable
             ->where('user_id', $user->id)
             ->count() > 0;
     }
-}
 
+    public function getMessages(Chat $chat)
+    {
+        return $this->messages()->where('chat_id', $chat->id);
+    }
+
+    public function setPasswordAttribute($value){
+        $this->attributes['password'] = bcrypt($value);
+    }
+}

@@ -15,11 +15,7 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->validated(['name']),
-            'email' => $request->validated(['email']),
-            'password' => bcrypt($request->validated(['password'])),
-        ]);
+        $user = User::create($request->validated());
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
@@ -30,19 +26,14 @@ class AuthController extends Controller
 
         Auth::guard('web')->login($user);
 
-        return response($response);
+        return response()->json($response);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $fields = $request->validate([
-            'email' => 'required',
-            'password' => 'required'
-        ]);
+        $user = User::where('email', $request->validated(['email']))->first();
 
-        $user = User::where('email', $fields['email'])->first();
-
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!$user || !Hash::check($request->validated(['password']), $user->password)) {
             return response([
                 'message' => 'bad creds'
             ], 401);
@@ -61,7 +52,7 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-        return response($response);
+        return response()->json($response);
     }
 
     public function logout()

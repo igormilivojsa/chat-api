@@ -14,13 +14,13 @@ class MessageController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function index(Chat $chat)
     {
         $messages = Message::all();
 
-        return $messages;
+        return response()->json($messages);
     }
 
     /**
@@ -43,18 +43,20 @@ class MessageController extends Controller
     {
         $chat->messages()->create($request->validated());
 
-        return response()->json('message stored');
+        return response()->json([
+            'message' => 'Message sent successfully'
+        ]);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function show(Chat $chat,$body)
     {
-        return $chat->messages()->where('body', 'like', '%'.$body.'%')->get();
+        return response()->json($chat->messages()->where('body', 'like', '%'.$body.'%')->get());
     }
 
     /**
@@ -90,6 +92,8 @@ class MessageController extends Controller
     {
         $chat->messages()->find($id)->delete();
 
-        return response()->json('message deleted');
+        return response()->json([
+            'message' => 'Message deleted successfully'
+        ]);
     }
 }
