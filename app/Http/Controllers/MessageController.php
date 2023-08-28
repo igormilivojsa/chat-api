@@ -16,9 +16,15 @@ class MessageController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function index(Chat $chat)
+    public function index(Chat $chat): JsonResponse
     {
-        $messages = Message::all();
+
+        Message::where('chat_id', $chat->id)->whereNot('user_id', auth()->id())->whereNull('seen_at')->update([
+            'seen_at' => now(),
+        ]);
+
+        $messages = Message::where('chat_id', $chat->id)->get();
+
 
         return response()->json($messages);
     }

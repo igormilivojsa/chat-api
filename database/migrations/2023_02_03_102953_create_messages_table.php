@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('body');
             $table->foreignId('user_id');
             $table->foreignId('chat_id');
+            $table->dateTime('seen_at')->nullable();
             $table->timestamps();
         });
     }
