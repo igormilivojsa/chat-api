@@ -23,20 +23,7 @@ class ChatController extends Controller
 
     public function store(User $user)
     {
-        if (auth()->user()->hasChatWith($user) == false) {
-            $chat = Chat::create();
-
-            auth()->user()->chats()->attach($chat);
-            $user->chats()->attach($chat);
-
-            return response()->json([
-                'message' => 'Chat created successfully'
-            ]);
-        } else {
-            return response()->json([
-                'message' => __('The chat alredy exists!'),
-            ]);
-        }
+        //
     }
 
     public function show(Chat $chat)

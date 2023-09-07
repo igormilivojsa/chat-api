@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('body');
+            $table->string('body')->nullable();
+            $table->string('file')->nullable();
             $table->foreignId('user_id');
             $table->foreignId('chat_id');
             $table->dateTime('seen_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

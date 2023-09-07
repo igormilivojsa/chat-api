@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,6 +39,17 @@ class FriendController extends Controller
 
         if (! auth()->user()->isFriends($user)) {
             auth()->user()->follow($user);
+
+            if (auth()->user()->hasChatWith($user) == false) {
+                $chat = Chat::create();
+
+                auth()->user()->chats()->attach($chat);
+                $user->chats()->attach($chat);
+
+                return response()->json([
+                    'message' => 'Chat created successfully'
+                ]);
+            }
 
             return response()->json([
                 'message' => __('The follow was successful!'),
